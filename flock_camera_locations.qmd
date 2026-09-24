@@ -1,0 +1,52 @@
+---
+title: "Flock camera locations"
+format: html
+name: Sofia Rodas
+date: September 2026
+---
+
+## Background
+Flock cameras are a brand of Automate License Plate Readers (ALPRs) that are being installed throughout the US. ALPRs have been promoted as a tool to combat crime, however in reality they pose privacy risks as they track peoples movements sharing it nationally with participating agencies. ALPRs give users unfounded access to constant data of peoples whereabouts.  Misuse of ALPR data is reported with some of the most malicious uses being police stalking ex-partners.
+
+A movement to remove ALPRs called [DeFlock](https://deflock.org/) is mapping ALPR locations nationwide. This repository explores where ALPRs are located.
+
+## Data Access
+
+The data is publicly collected through crowd sourcing. A publicly accessible [GitHub repository](https://github.com/FoggedLens/deflock-data) explains how to download the data. 
+
+```{r}
+# load appropriate libraries
+library(sf)
+library(tmap)
+```
+
+Only run this once as it downloads the data. Unless you're trying to download updated data you don't need to redownload it.
+```{r}
+url  <- "https://data.dontgetflocked.com/cameras.geojson.gz"
+flock_data <- "cameras.geojson.gz"
+download.file(url, flock_data, mode = "wb")
+```
+
+
+```{r}
+# read in the data from the downloaded file
+cams <- st_read(paste0(flock_data))  # GDAL reads the gzip directly
+
+# view size of the data
+print(nrow(cams))
+
+# view the top of the data frame
+head(cams)
+
+```
+
+Yay! We downloaded the data
+
+## Initial investigation
+```{r}
+tm_shape(cams)+
+  tm_dots()
+```
+Based on this map the ALPRs are located across the US. 
+
+Let's investigate a subsect. 
