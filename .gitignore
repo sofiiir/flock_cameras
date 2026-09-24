@@ -4,6 +4,10 @@
 
 # data
 cameras.geojson.gz
+data/*
+
+# ds_store
+.DS_Store
 
 # Session Data files
 .RData
