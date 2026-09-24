@@ -5,6 +5,6 @@ Flock cameras are a brand of Automate License Plate Readers (ALPRs) that are bei
 
 A movement to remove ALPRs called [DeFlock](https://deflock.org/) is mapping ALPR locations nationwide. This repository explores the ALPR location data.
 
-### References
+** ### References
 
-[DeFlock](https://deflock.org/).https://deflock.org/
+[DeFlock](https://deflock.org/).https://deflock.org/ **
