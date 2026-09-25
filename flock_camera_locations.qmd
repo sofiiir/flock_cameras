@@ -3,6 +3,8 @@ title: "Flock camera locations"
 format: html
 name: Sofia Rodas
 date: September 2026
+message: false
+warning: false
 ---
 
 ## Background
@@ -16,12 +18,15 @@ The data is publicly collected through crowd sourcing. A publicly accessible [Gi
 
 ```{r}
 # load appropriate libraries
+library(tidyverse)
 library(sf)
 library(tmap)
 ```
 
 Only run this once as it downloads the data. Unless you're trying to download updated data you don't need to redownload it.
 ```{r}
+#| eval: false
+
 url  <- "https://data.dontgetflocked.com/cameras.geojson.gz"
 flock_data <- "cameras.geojson.gz"
 download.file(url, flock_data, mode = "wb")
@@ -30,7 +35,7 @@ download.file(url, flock_data, mode = "wb")
 
 ```{r}
 # read in the data from the downloaded file
-cams <- st_read(paste0(flock_data))  # GDAL reads the gzip directly
+cams <- st_read(flock_data)
 
 # view size of the data
 print(nrow(cams))
@@ -40,7 +45,7 @@ head(cams)
 
 ```
 
-Yay! We downloaded the data
+Yay! We downloaded the data!
 
 ## Initial investigation
 ```{r}
@@ -50,3 +55,55 @@ tm_shape(cams)+
 Based on this map the ALPRs are located across the US. 
 
 Let's investigate a subsect. 
+
+## ALPR cameras in Los Angeles
+
+As a Los Angeles native I'm most interested in the ALPR distribution in Los Angeles. I downlaoded 
+```{r}
+# read in Los Angeles neighnorhood shape file
+la_neighborhood <- sf::st_read(here::here("..", "fall", "eds-223-geospatial", "eds223-hw1","data","LA_Times_Neighborhood_Boundaries-shp", 
+                                          "8494cd42-db48-4af1-a215-a2c8f61e96a22020328-1-621do0.x5yiu.shp"))
+```
+
+Make sure the CRS are the same for all of our geospatial items.
+```{r}
+# ensure the crs match
+if_else((st_crs(la_neighborhood) == st_crs(cams)) == "TRUE", 
+        "The CRS match!", 
+        "The CRS do not match.")
+```
+
+Transform the CRS so that they match.
+```{r}
+la_neighborhood <- st_transform(la_neighborhood, crs = st_crs(cams))
+```
+
+Double check that the transformation was successful.
+```{r}
+# ensure the crs match
+if_else((st_crs(la_neighborhood) == st_crs(cams)) == "TRUE", 
+        "The CRS match!", 
+        "The CRS do not match.")
+```
+
+Map only LA County ALPRs.
+```{r}
+tm_shape(cams)+
+    tm_dots(fill_alpha = 0.5)+ 
+  tm_shape(la_neighborhood, is.main = TRUE)+
+    tm_borders()
+```
+
+This map shows the ALPRs that are within the bounding box of LA County but this looks messy since some of the points aren't within the polygons. Let's create a new data set for only those points that are within the polygons. 
+
+
+```{r}
+
+```
+
+
+
+## References
+- LA Times. (2016). LA Times Neighborhood Boundaries. Retrieved from [URL](https://geohub.lacity.org/datasets/d6c55385a0e749519f238b77135eafac_0/about)
+
+
