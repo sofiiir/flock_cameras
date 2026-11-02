@@ -58,7 +58,7 @@ Let's investigate a subsect.
 
 ## ALPR cameras in Los Angeles
 
-As a Los Angeles native I'm most interested in the ALPR distribution in Los Angeles. I downlaoded 
+As a Los Angeles native I'm most interested in the ALPR distribution in Los Angeles. I downlaoded a map of Los Angeles neighborhoods to dissect which areas ALPRs are mapped most frquently. These maps are open-sourced and available through the Los Angeles Times ESRI portal.
 ```{r}
 # read in Los Angeles neighnorhood shape file
 la_neighborhood <- sf::st_read(here::here("..", "fall", "eds-223-geospatial", "eds223-hw1","data","LA_Times_Neighborhood_Boundaries-shp", 
@@ -98,9 +98,16 @@ This map shows the ALPRs that are within the bounding box of LA County but this 
 
 
 ```{r}
+# subset for cams within la neighborhoods
+la_cams <- st_within(cams, la_neighborhood)
 
+la_cams <- cams[[la_cams == 1]]
 ```
-
+Map to make sure it worked
+```{r}
+tm_shape(la_cams)+
+  tm_dots()
+```
 
 
 ## References
