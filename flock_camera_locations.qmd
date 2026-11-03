@@ -99,15 +99,51 @@ This map shows the ALPRs that are within the bounding box of LA County but this 
 
 ```{r}
 # subset for cams within la neighborhoods
-la_cams <- st_within(cams, la_neighborhood)
+la_cams <- lengths(st_intersects(cams, 
+                         la_neighborhood)) > 0
+## Note: this saves an sgbp value
 
-la_cams <- cams[[la_cams == 1]]
+# subset the original cams object for only those that are within la_neighborhoods
+la_cams <- cams[la_cams, ]
+
+###................ ALTERNATE CODE .................
+# la_cams1 <- st_filter(cams, la_neighborhood, .predicate = st_within)
 ```
-Map to make sure it worked
+
+Map to make sure our subsetting worked
 ```{r}
 tm_shape(la_cams)+
-  tm_dots()
+  tm_dots(fill = "hotpink") + 
+  tm_shape(la_neighborhood)+
+  tm_polygons(fill_alpha = 0)+
+  tm_title("ALPR Cameras in LA Neighborhoods")+
+  tm_compass(position = tm_pos_out())
 ```
+I also want the names of the neighborhoods that have the most documented ALPRs. I'll join the `la_cams` object with the `la_neighborhood` object.
+
+```{r}
+la_cams2 <- st_join(la_cams, la_neighborhood)
+```
+
+This join added one extra observation. One of the ALPRs is likely straddling more than one neighborhood. Let's investigate.
+```{r}
+janitor::get_dupes(la_cams2, osmId)
+```
+```{r}
+beverly_crest <- nrow(la_cams2[la_cams2$name == "Beverly Crest", ])
+
+print(paste("Number of cameras in Beverly Crest: ", beverly_crest))
+print(paste("Number of cameras in Westwood: ", nrow(la_cams2[la_cams2$name == "Westwood", ])))
+```
+
+Since the duplicated obeservation is the sole observation in Beverly Crest, I'll drop it from the Westwood neighborhood.
+
+```{r}
+# drop duplicate from the westwood
+
+```
+
+
 
 
 ## References
