@@ -125,6 +125,7 @@ I also want the names of the neighborhoods that have the most documented ALPRs. 
 la_cams2 <- st_join(la_cams, la_neighborhood)
 ```
 
+## Identify Duplicates and Clean Data
 This join added one extra observation. One of the ALPRs is likely straddling more than one neighborhood. Let's investigate.
 ```{r}
 janitor::get_dupes(la_cams2, osmId)
@@ -136,11 +137,22 @@ print(paste("Number of cameras in Beverly Crest: ", beverly_crest))
 print(paste("Number of cameras in Westwood: ", nrow(la_cams2[la_cams2$name == "Westwood", ])))
 ```
 
-Since the duplicated obeservation is the sole observation in Beverly Crest, I'll drop it from the Westwood neighborhood.
+Since the duplicated observation is the sole observation in Beverly Crest, I'll drop it from the Westwood neighborhood.
 
 ```{r}
 # drop duplicate from the westwood
+la_cams2 <- la_cams2 |> filter_out(osmId == "13936975701" & name == "Westwood")
+```
 
+## Create Visual Based on Camera Density
+```{r}
+# calculate number of observed ALPR cameras per neighborhood
+density_table <- la_cams2 |> count(name) |> 
+  rename(count = n)
+
+# map alpr camera density
+tm_shape(density_table) +
+  tm_polygons(fill = count)
 ```
 
 
