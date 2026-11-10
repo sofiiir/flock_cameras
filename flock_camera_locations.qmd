@@ -2,7 +2,7 @@
 title: "Flock camera locations"
 format: html
 name: Sofia Rodas
-date: September 2026
+date: November 2026
 message: false
 warning: false
 ---
@@ -145,17 +145,35 @@ la_cams2 <- la_cams2 |> filter_out(osmId == "13936975701" & name == "Westwood")
 ```
 
 ## Create Visual Based on Camera Density
+
+The current data has the geometries of the points, however to get the desired visuals, the polygon geometries are required. We also want to fill any NAs with zero for mapping to show that there are no documented ALPRs in these communities to date. 
 ```{r}
 # calculate number of observed ALPR cameras per neighborhood
 density_table <- la_cams2 |> count(name) |> 
   rename(count = n)
 
-# map alpr camera density
-tm_shape(density_table) +
-  tm_polygons(fill = count)
+# join counts to the polygon geometries
+density_polygons <- st_join(la_neighborhood, density_table)
+
+# clean the table and fill nas with zero
+density_polygons <- density_polygons |> 
+  janitor::clean_names() |> 
+  select(name_x, count, geometry) |> 
+  rename(name = name_x) |> 
+  mutate(count = ifelse(is.na(count), 0, count))
 ```
 
+Now lets make our map!
+```{r}
+tm_shape(density_polygons) +
+  tm_polygons(fill = "count") 
+## ADD TITLE 
+## CHANGE TITLE OF THE LEGEND
+## INVESTIGATE BEST BINS
+## ADD NORTH ARROW AND SCALE
+```
 
+Darker regions show where more ALPRs have been documented. However, this does not mean that these are the locations where ALPRs exist. There may simply be more awareness of ALPRs in these communities and therefore have more volunteers mapping ALPRs. This map can act as a guide for where further education and on the ground ALPR identification may be useful. Those areas in darker shades may benefit from advocacy to remove ALPRs from communities while those in lighter shades may need more technical knowledge of identifying and reporting ALPRs. 
 
 
 ## References
