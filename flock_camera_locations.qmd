@@ -166,11 +166,18 @@ density_polygons <- density_polygons |>
 Now lets make our map!
 ```{r}
 tm_shape(density_polygons) +
-  tm_polygons(fill = "count") 
-## ADD TITLE 
+  tm_polygons(fill = "count",
+              fill.legend = tm_legend(values = c(0, 1, 15, 25, 35), ## TROUBLESHOOT BINS NOT WORKING 
+                                      title = "Number of ALPR cameras")) +
+  tm_basemap() +
+  tm_title(text = "Density of ALPRs in Los Angeles") +
+  tm_scalebar(position = c("left", "bottom")) + 
+  tm_compass(position = c())
+ 
 ## CHANGE TITLE OF THE LEGEND
 ## INVESTIGATE BEST BINS
 ## ADD NORTH ARROW AND SCALE
+## ADD BASEMAP
 ```
 
 Darker regions show where more ALPRs have been documented. However, this does not mean that these are the locations where ALPRs exist. There may simply be more awareness of ALPRs in these communities and therefore have more volunteers mapping ALPRs. This map can act as a guide for where further education and on the ground ALPR identification may be useful. Those areas in darker shades may benefit from advocacy to remove ALPRs from communities while those in lighter shades may need more technical knowledge of identifying and reporting ALPRs. 
