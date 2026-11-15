@@ -22,20 +22,20 @@ library(tidyverse)
 library(sf)
 library(tmap)
 ```
-
-Only run this once as it downloads the data. Unless you're trying to download updated data you don't need to redownload it.
+## Download Flock Camera Data
+The following code chuncks download the crowdsourced data from the Flock mapping grassroot initiatives. These code chunks can just be run once and will save the data locally. However, this data source is constantly changing. To use the most up to date data re-run the code. 
 ```{r}
 #| eval: false
 
 url  <- "https://data.dontgetflocked.com/cameras.geojson.gz"
-flock_data <- "cameras.geojson.gz"
-download.file(url, flock_data, mode = "wb")
+download.file(url, "cameras.geojson.gz", mode = "wb")
 ```
+
 
 
 ```{r}
 # read in the data from the downloaded file
-cams <- st_read(flock_data)
+cams <- st_read("cameras.geojson.gz")
 
 # view size of the data
 print(nrow(cams))
