@@ -172,8 +172,7 @@ tm_shape(density_polygons) +
   tm_basemap() +
   tm_title(text = "Density of ALPRs in Los Angeles") +
   tm_scalebar(position = c("left", "bottom")) + 
-  tm_compass(type = "4star", 
-             position = c())
+  tm_compass(position = c())
  
 ## CHANGE TITLE OF THE LEGEND
 ## INVESTIGATE BEST BINS
